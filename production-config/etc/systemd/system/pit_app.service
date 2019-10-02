@@ -1,0 +1,11 @@
+[Unit]
+Description=Gunicorn instance to serve the PIT App
+After=network.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/PITCensus/pitapp
+ExecStart=/usr/bin/gunicorn --workers 3 --bind localhost:5000 --certfile fullchain.pem --keyfile privkey.pem main:pit_app
+
+[Install]
+WantedBy=multi-user.target

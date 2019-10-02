@@ -1,0 +1,17 @@
+ #export-data-button {
+     display: inline-block;
+     height: 39px;
+     background-color: dodgerblue;
+     color: white;
+     margin-left: 1em;
+ }
+
+.response-count {
+    font-weight: 400;
+    bottom: 40px;
+    left: 20px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}

@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript" src="js/svg.jquery.js"></script>
+<script type="text/javascript" src="js/pygal-tooltips.min.js"></script>
+<script type="text/javascript" src="js/filesaver.min.js"></script>
+<link rel="stylesheet" type="text/css" href="admin.css">
+
+    <script>
+    function download(text) {
+        let blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, 'surveys.csv');
+    }
+
+    $(document).ready(() => {
+        $("#export-data-button").on( "click", () => {
+            $.ajax({
+            url: "{{ url_for('getAllSurveys') }}",
+            type: 'get',
+            headers: {
+                "x-api-key": $("#dataauthkey").html()
+            },
+            success: (result) => {
+                download(result);
+            },
+            error: () => {
+                alert(`Error downloading survey data.`);
+            }
+        });
+        });
+    });
+    </script>
+<!-- Begin Main page content -->
+<div class="container">
+    <p class="lead"><span class="glyphicon glyphicon-tasks"></span>Statistics</p>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 style="color:white;">Survey Count: <b>{{surveys}}</b></h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                {% for (chart, count) in pie_charts %}
+                <div class="col-md-6 well">
+                    {{ chart.render() | safe }}
+                 <text class="response-count">{{ count }} responses</text>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <p class="lead"><span class="glyphicon glyphicon-download-alt"></span>Download</p>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 style="color:white;">Data Export</b></h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="lead">Download all the survey data to your machine.</p>
+                </div>
+            </div>
+            <div class="row">
+{#                <input id="data-key" type="text" placeholder="API Data Key">#}
+                <button id="export-data-button">Export Data</button>
+            </div>
+        </div>
+    </div>
+
+    <p class="lead"><span class="glyphicon glyphicon-wrench"></span>Settings</p>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 style="color:white;">Application Settings</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="lead">To edit these settings, change the contents of the .ini file included with the server.</p>
+                </div>
+            </div>
+            {% for section in config %}
+            <div class="row">
+                {% for key,value in config[section].iteritems() %}
+                <div class="col-md-4">
+                    <h4>{{ section + "." + key }}</h4><pre id="{{ key }}">{{ value + " " }}</pre>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %} 
